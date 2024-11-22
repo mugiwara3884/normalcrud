@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Entry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #message {
+            margin-top: 20px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Create New Entry</h1>
+
+    <!-- Form to take input from user -->
+    <form id="entryForm">
+        <input type="text" id="entry" placeholder="Enter something..." required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Message will be displayed here after submission -->
+    <div id="message" style="display:none;"></div>
+
+    <script>
+        // Handle form submission using JavaScript
+        document.getElementById('entryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();  // Prevent the form from submitting traditionally
+
+            const entry = document.getElementById('entry').value;  // Get the value from the form
+
+            try {
+                // Send POST request to the server
+                const response = await fetch('http://localhost:3000/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ entry })  // Send the entry as JSON
+                });
+
+                const data = await response.json();
+                console.log(response).entry;
+
+                if (response.ok) {
+                    // Show success message
+                    document.getElementById('message').style.display = 'block';
+                    document.getElementById('message').textContent = data.message;
+                    document.getElementById('message').className = 'success';
+                    document.getElementById('entry').value = '';  // Clear the input
+                } else {
+                    // Show error message
+                    document.getElementById('message').style.display = 'block';
+                    document.getElementById('message').textContent = 'Error: ' + data.error;
+                    document.getElementById('message').className = 'error';
+                }
+            } catch (error) {
+                // Handle errors from the fetch request
+                document.getElementById('message').style.display = 'block';
+                document.getElementById('message').textContent = 'Error: ' + error.message;
+                document.getElementById('message').className = 'error';
+            }
+        });
+    </script>
+
+</body>
+</html>
